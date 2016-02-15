@@ -1,0 +1,19 @@
+---
+- hosts: local
+  connection: local
+  tasks:
+   - name: Install APP
+     git: repo=https://github.com/NingZhongProject/MyFlaskApp.git dest=/home/vagrant version=release-0.1
+     sudo: yes
+
+   - name: install Mongodb 1
+     apt_key: keyserver=keyserver.ubuntu.com:80 id=7F0CEB10
+     sudo: yes
+
+   - name: install Mongodb 2
+     apt: update_cache=yes
+     sudo: yes
+
+   - name: install Mongodb 3
+     apt: name=mongodb-org state=present
+     sudo: yes
