@@ -1,0 +1,11 @@
+{
+  "auth_token" : "B8dsbz4HExMskqUa6Qhn",
+  "name" : "Fuelstation Central",
+  "city" : "Grossbeeren",
+  "address" : "Buschweg 1",
+  "latitude" : 52.3601,
+  "longitude" : 13.3332,
+  "washing" : true,
+  "founded_at_year" : 2000,
+  "products" : ["diesel","benzin"]
+}

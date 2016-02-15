@@ -1,0 +1,62 @@
+import logging
+from logging.handlers import RotatingFileHandler
+
+import hashlib
+
+import json
+
+from flask import Flask, request, jsonify, render_template
+
+from flask.ext.pymongo import PyMongo
+from pymongo import MongoClient
+
+app = Flask(__name__)
+mongo = PyMongo(app)
+
+@app.route('/hello')
+def hello():
+    return "hello!" 
+
+@app.route('/idx')
+def idx():
+    # Render template
+    return render_template('index.html')
+
+@app.route('/home_page')
+def home_page():
+    online_users = mongo.db.users.find({'online': True})
+    return render_template('index.html',
+        online_users=online_users)
+
+@app.route('/post', methods = ['POST'])
+def post():
+    # Get the parsed contents of the form data
+    jsonObj = request.get_json()
+    print(jsonObj)
+
+    #connecting to mongoDB
+    connection = MongoClient()
+    db = connection.project #database name.
+    collection = connection.signup # collection name.
+
+    uslist = jsonObj['users']
+    for uVal in uslist:
+        oriCheckSum = uVal['md5checksum']
+        print("original:" + oriCheckSum)
+        del uVal['md5checksum']
+        newMD5 = hashlib.md5(str(uVal)).hexdigest()
+        print(newMD5)
+        print(uVal)
+        collection.test.insert(uVal)
+
+    # Render template
+    app.logger.error('about to return')
+    return jsonify(results=jsonObj) 
+
+
+
+if __name__ == "__main__":
+    handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+    app.run(port=8080, debug=True)
